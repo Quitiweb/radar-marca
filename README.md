@@ -16,32 +16,14 @@ Detección de presencia digital, dominios sospechosos y posibles suplantaciones 
 
 RadarMarca es una herramienta para ayudar a marcas, agencias y equipos de seguridad a encontrar señales de riesgo alrededor de una marca en internet.
 
-El objetivo no es prometer una plataforma gigante desde el día uno, sino resolver un problema real de forma simple:
+## Estado actual
 
-- descubrir dominios parecidos a una marca
-- identificar candidatos sospechosos
-- priorizar lo que merece revisión humana
-- ofrecer una vista clara y repetible cada vez que se consulta
+Ahora mismo el proyecto va por una **v0.4** funcional para trabajo local.
 
-## Problema que resuelve
+## Qué incluye ya
 
-Muchas marcas no saben:
-
-- qué dominios parecidos existen
-- si alguien está intentando suplantarlas
-- si hay typosquatting o phishing potencial
-- qué huella digital no controlada tienen en la web
-
-RadarMarca nace para reducir esa búsqueda manual.
-
-## MVP v1
-
-El MVP inicial se centra en lo más directo y vendible:
-
-### Incluye
-
-- entrada por nombre de marca
-- entrada por fichero JSON de marcas
+- persistencia por cliente y marca
+- config estable por marca
 - generación de variantes de dominio sospechosas
 - scoring básico por similitud
 - comprobación DNS básica
@@ -50,19 +32,21 @@ El MVP inicial se centra en lo más directo y vendible:
 - snapshots JSON por marca
 - diff entre snapshots
 - ranking de hallazgos nuevos vs ya vistos
+- comparación de riesgo: sube / baja / se mantiene
 - informe Markdown por marca
 - exportación JSON y CSV
 - mini dashboard HTML
-- CLI local para ejecutar búsquedas rápidas
+- visor web local con Flask
+- enriquecimiento básico con CT logs, NS, MX, título HTTP y fingerprint simple
 
-### No incluye todavía
+## Qué no incluye todavía
 
 - crawling profundo
 - OCR o análisis visual de logos
 - monitorización continua programada
-- panel web
+- alertas automáticas
 - integraciones con email/Slack/Telegram
-- IA para clasificación avanzada
+- clasificación avanzada con IA
 - análisis de menciones en redes/plataformas
 
 ## Enfoque funcional
@@ -75,6 +59,7 @@ Busca y prioriza:
 - dominios con tokens similares
 - dominios activos
 - señales básicas de riesgo
+- certificados recientes relacionados
 
 ### HuellaMarca
 Módulo futuro de contexto.
@@ -100,6 +85,9 @@ radar-marca/
 │     ├─ scorer.py
 │     ├─ scan.py
 │     ├─ storage.py
+│     ├─ history.py
+│     ├─ sources.py
+│     ├─ webapp.py
 │     ├─ domain_generator.py
 │     ├─ resolvers.py
 │     └─ report.py
@@ -109,7 +97,9 @@ radar-marca/
 │  ├─ test_report.py
 │  ├─ test_scan.py
 │  ├─ test_scorer.py
-│  └─ test_storage.py
+│  ├─ test_sources.py
+│  ├─ test_storage.py
+│  └─ test_webapp.py
 └─ examples/
    └─ brands.json
 ```
@@ -125,17 +115,25 @@ pip install -e . pytest
 
 ## Uso rápido
 
-```bash
-radar-marca scan --brand "Acme" --domain acme.com --whitelist acme.es --json
-```
-
-Ejemplo con límite de candidatos y guardado de snapshot/informe/CSV/HTML:
+Crear config estable por marca:
 
 ```bash
-radar-marca scan --brand "Acme" --domain acme.com --limit 25 --save-snapshot --save-report --save-csv --save-html
+radar-marca init-brand --client demo --brand "Acme" --domain acme.com --whitelist acme.es
 ```
 
-Ejemplo por fichero:
+Escaneo usando la config estable:
+
+```bash
+radar-marca scan --client demo --brand "Acme" --use-config --json
+```
+
+Escaneo con snapshot, informe, CSV y HTML:
+
+```bash
+radar-marca scan --client demo --brand "Acme" --use-config --limit 25 --save-snapshot --save-report --save-csv --save-html
+```
+
+Escaneo por fichero:
 
 ```bash
 radar-marca scan-file --input examples/brands.json --limit 15 --skip-http --save-snapshot --save-report --save-csv --save-html
@@ -144,18 +142,18 @@ radar-marca scan-file --input examples/brands.json --limit 15 --skip-http --save
 Comparar snapshots:
 
 ```bash
-radar-marca diff --brand "Acme"
+radar-marca diff --client demo --brand "Acme"
 ```
 
-O indicando dos ficheros:
+Levantar visor web local:
 
 ```bash
-radar-marca diff --previous data/snapshots/acme-20260430T100000Z.json --current data/snapshots/acme-20260430T120000Z.json
+radar-marca serve --host 127.0.0.1 --port 5000
 ```
 
 ## Salida esperada
 
-El comando devuelve candidatos con campos como:
+Los resultados incluyen campos como:
 
 - `domain`
 - `similarity_score`
@@ -163,27 +161,13 @@ El comando devuelve candidatos con campos como:
 - `http_reachable`
 - `risk_score`
 - `notes`
+- `ns_records`
+- `mx_records`
+- `title`
+- `fingerprint`
+- `whois_summary`
+- `source_tags`
 - `status` en CSV (`new`, `seen`, `current`)
-
-## Roadmap corto
-
-### v1
-- CLI funcional
-- scoring inicial
-- chequeo DNS/HTTP
-- JSON de resultados
-
-### v2
-- lista blanca persistente por marca
-- primeras reglas de clasificación
-- score más rico por señales de contenido
-- soporte multi-fuente más allá de dominios
-
-### v3
-- HuellaMarca
-- panel web
-- alertas
-- análisis de contenido
 
 ## Idea comercial inicial
 
@@ -203,6 +187,14 @@ Y como valor secundario:
 
 - visibilidad de presencia digital
 
+## Siguiente iteración sugerida
+
+- almacenamiento más rico por cliente
+- snapshots programados
+- correlación de títulos, logos y templates
+- reglas de clasificación más finas
+- conectores de alertas
+
 ## Estado
 
-En construcción. Este repo arranca con la base del MVP técnico.
+En construcción, pero ya usable como base real de producto técnico.

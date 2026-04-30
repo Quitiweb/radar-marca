@@ -8,12 +8,33 @@ from radar_marca.models import BrandProfile, CandidateDomain
 
 
 DEFAULT_DATA_DIR = Path("data")
+DEFAULT_CONFIG_DIR = Path("config")
 
 
 def ensure_data_dir(base_dir: str | Path = DEFAULT_DATA_DIR) -> Path:
     path = Path(base_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def ensure_config_dir(base_dir: str | Path = DEFAULT_CONFIG_DIR) -> Path:
+    path = Path(base_dir)
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _safe_brand_slug(value: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
+
+
+def brand_storage_dir(client: str, brand: str, base_dir: str | Path = DEFAULT_DATA_DIR) -> Path:
+    return ensure_data_dir(base_dir) / "clients" / _safe_brand_slug(client) / _safe_brand_slug(brand)
+
+
+def brand_config_path(client: str, brand: str, base_dir: str | Path = DEFAULT_CONFIG_DIR) -> Path:
+    root = ensure_config_dir(base_dir) / "clients" / _safe_brand_slug(client)
+    root.mkdir(parents=True, exist_ok=True)
+    return root / f"{_safe_brand_slug(brand)}.json"
 
 
 def load_brand_profiles(path: str | Path) -> list[BrandProfile]:
@@ -25,13 +46,52 @@ def load_brand_profiles(path: str | Path) -> list[BrandProfile]:
                 brand=item["brand"],
                 legitimate_domains=item.get("legitimate_domains", []),
                 whitelist=item.get("whitelist", []),
+                client=item.get("client", "default"),
+                watch_ct_logs=item.get("watch_ct_logs", True),
             )
         )
     return profiles
 
 
+def load_brand_profile(path: str | Path) -> BrandProfile:
+    item = json.loads(Path(path).read_text(encoding="utf-8"))
+    return BrandProfile(
+        brand=item["brand"],
+        legitimate_domains=item.get("legitimate_domains", []),
+        whitelist=item.get("whitelist", []),
+        client=item.get("client", "default"),
+        watch_ct_logs=item.get("watch_ct_logs", True),
+    )
+
+
+def save_brand_profile(profile: BrandProfile, base_dir: str | Path = DEFAULT_CONFIG_DIR) -> Path:
+    path = brand_config_path(profile.client, profile.brand, base_dir=base_dir)
+    path.write_text(
+        json.dumps(
+            {
+                "brand": profile.brand,
+                "client": profile.client,
+                "legitimate_domains": profile.legitimate_domains,
+                "whitelist": profile.whitelist,
+                "watch_ct_logs": profile.watch_ct_logs,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def list_brand_profiles(base_dir: str | Path = DEFAULT_CONFIG_DIR) -> list[Path]:
+    root = ensure_config_dir(base_dir) / "clients"
+    if not root.exists():
+        return []
+    return sorted(root.glob("**/*.json"))
+
+
 def snapshot_filename(brand: str) -> str:
-    safe_brand = "".join(ch.lower() if ch.isalnum() else "-" for ch in brand).strip("-")
+    safe_brand = _safe_brand_slug(brand)
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     return f"{safe_brand}-{timestamp}.json"
 
@@ -47,10 +107,6 @@ def save_snapshot(brand: str, results: list[CandidateDomain], base_dir: str | Pa
     }
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return path
-
-
-def _safe_brand_slug(brand: str) -> str:
-    return "".join(ch.lower() if ch.isalnum() else "-" for ch in brand).strip("-")
 
 
 def list_snapshots_for_brand(brand: str, base_dir: str | Path = DEFAULT_DATA_DIR) -> list[Path]:

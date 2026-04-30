@@ -6,7 +6,7 @@ import io
 import json
 
 from radar_marca.history import SnapshotDiff
-from radar_marca.models import CandidateDomain
+from radar_marca.models import CandidateDomain, RiskChange
 
 
 def to_json(results: list[CandidateDomain]) -> str:
@@ -18,8 +18,9 @@ def to_text(results: list[CandidateDomain]) -> str:
     lines: list[str] = []
     for item in results:
         notes = ", ".join(item.notes) if item.notes else "-"
+        sources = ", ".join(item.source_tags) if item.source_tags else "-"
         lines.append(
-            f"- {item.domain} | similarity={item.similarity_score:.2f} | dns={item.dns_resolves} | http={item.http_reachable} | risk={item.risk_score} | notes={notes}"
+            f"- {item.domain} | similarity={item.similarity_score:.2f} | dns={item.dns_resolves} | http={item.http_reachable} | risk={item.risk_score} | sources={sources} | notes={notes}"
         )
     return "\n".join(lines)
 
@@ -31,9 +32,21 @@ def _markdown_findings(title: str, results: list[CandidateDomain], limit: int = 
         return lines
     for item in results[:limit]:
         notes = ", ".join(item.notes) if item.notes else "-"
+        sources = ", ".join(item.source_tags) if item.source_tags else "-"
+        title_hint = f", title: {item.title}" if item.title else ""
         lines.append(
-            f"- **{item.domain}** — riesgo {item.risk_score}/100, similitud {item.similarity_score:.2f}, dns={item.dns_resolves}, http={item.http_reachable}, notas: {notes}"
+            f"- **{item.domain}** — riesgo {item.risk_score}/100, similitud {item.similarity_score:.2f}, dns={item.dns_resolves}, http={item.http_reachable}, fuentes: {sources}, notas: {notes}{title_hint}"
         )
+    return lines
+
+
+def _markdown_risk_changes(title: str, changes: list[RiskChange], limit: int = 10) -> list[str]:
+    lines = [title]
+    if not changes:
+        lines.append("- Ninguno")
+        return lines
+    for item in changes[:limit]:
+        lines.append(f"- **{item.domain}** — {item.previous_risk} → {item.current_risk} ({item.delta:+d})")
     return lines
 
 
@@ -60,6 +73,8 @@ def to_markdown(
             "## Resumen",
             f"- Candidatos analizados: {len(results)}",
             f"- Riesgo alto (>=50): {len(top_risky)}",
+            f"- Dominios con MX: {sum(1 for item in results if item.mx_records)}",
+            f"- Dominios con título HTTP: {sum(1 for item in results if item.title)}",
         ]
     )
 
@@ -69,6 +84,8 @@ def to_markdown(
                 f"- Nuevos desde snapshot anterior: {len(diff.new_domains)}",
                 f"- Ya vistos: {len(diff.seen_domains)}",
                 f"- Desaparecidos: {len(diff.removed_domains)}",
+                f"- Riesgo al alza: {len(diff.rising_risk)}",
+                f"- Riesgo a la baja: {len(diff.falling_risk)}",
             ]
         )
 
@@ -77,6 +94,8 @@ def to_markdown(
     if diff is not None:
         lines.extend(["", *(_markdown_findings("## Nuevos hallazgos", diff.new_domains))])
         lines.extend(["", *(_markdown_findings("## Ya vistos (siguen presentes)", diff.seen_domains))])
+        lines.extend(["", *(_markdown_risk_changes("## Riesgo al alza", diff.rising_risk))])
+        lines.extend(["", *(_markdown_risk_changes("## Riesgo a la baja", diff.falling_risk))])
         lines.append("")
         lines.append("## Dominios desaparecidos")
         if diff.removed_domains:
@@ -90,7 +109,21 @@ def to_markdown(
 def to_csv(results: list[CandidateDomain], diff: SnapshotDiff | None = None) -> str:
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["domain", "similarity_score", "dns_resolves", "http_reachable", "risk_score", "notes", "status"])
+    writer.writerow([
+        "domain",
+        "similarity_score",
+        "dns_resolves",
+        "http_reachable",
+        "risk_score",
+        "notes",
+        "status",
+        "ns_records",
+        "mx_records",
+        "title",
+        "fingerprint",
+        "whois_summary",
+        "source_tags",
+    ])
 
     new_set = {item.domain for item in diff.new_domains} if diff else set()
     seen_set = {item.domain for item in diff.seen_domains} if diff else set()
@@ -111,6 +144,12 @@ def to_csv(results: list[CandidateDomain], diff: SnapshotDiff | None = None) -> 
                 item.risk_score,
                 "|".join(item.notes),
                 status,
+                "|".join(item.ns_records),
+                "|".join(item.mx_records),
+                item.title or "",
+                item.fingerprint or "",
+                item.whois_summary or "",
+                "|".join(item.source_tags),
             ]
         )
     return output.getvalue()
@@ -120,6 +159,8 @@ def _html_rows(results: list[CandidateDomain], label: str) -> str:
     rows = []
     for item in results[:15]:
         notes = html.escape(", ".join(item.notes) if item.notes else "-")
+        title = html.escape(item.title or "-")
+        sources = html.escape(", ".join(item.source_tags) if item.source_tags else "-")
         rows.append(
             "<tr>"
             f"<td>{html.escape(item.domain)}</td>"
@@ -127,11 +168,22 @@ def _html_rows(results: list[CandidateDomain], label: str) -> str:
             f"<td>{item.similarity_score:.2f}</td>"
             f"<td>{'yes' if item.dns_resolves else 'no'}</td>"
             f"<td>{'yes' if item.http_reachable else 'no'}</td>"
+            f"<td>{sources}</td>"
+            f"<td>{title}</td>"
             f"<td>{notes}</td>"
             f"<td>{label}</td>"
             "</tr>"
         )
     return "\n".join(rows)
+
+
+def _html_risk_changes(changes: list[RiskChange]) -> str:
+    if not changes:
+        return "<li>Ninguno</li>"
+    return "".join(
+        f"<li><strong>{html.escape(item.domain)}</strong>: {item.previous_risk} → {item.current_risk} ({item.delta:+d})</li>"
+        for item in changes[:10]
+    )
 
 
 def to_html_dashboard(
@@ -157,10 +209,11 @@ def to_html_dashboard(
     .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }}
     .card {{ background: #121933; padding: 1rem; border-radius: 12px; }}
     table {{ width: 100%; border-collapse: collapse; margin-top: 1rem; }}
-    th, td {{ padding: 0.65rem; border-bottom: 1px solid #253056; text-align: left; font-size: 0.95rem; }}
+    th, td {{ padding: 0.65rem; border-bottom: 1px solid #253056; text-align: left; font-size: 0.95rem; vertical-align: top; }}
     th {{ color: #93c5fd; }}
     h1, h2 {{ margin-top: 1.5rem; }}
     ul {{ padding-left: 1.2rem; }}
+    a {{ color: #93c5fd; }}
   </style>
 </head>
 <body>
@@ -177,12 +230,19 @@ def to_html_dashboard(
 
   <h2>Hallazgos priorizados</h2>
   <table>
-    <thead><tr><th>Dominio</th><th>Riesgo</th><th>Similitud</th><th>DNS</th><th>HTTP</th><th>Notas</th><th>Estado</th></tr></thead>
+    <thead><tr><th>Dominio</th><th>Riesgo</th><th>Similitud</th><th>DNS</th><th>HTTP</th><th>Fuentes</th><th>Título</th><th>Notas</th><th>Estado</th></tr></thead>
     <tbody>
       {_html_rows(new_domains, 'new')}
       {_html_rows(seen_domains, 'seen')}
+      {_html_rows([item for item in results if item not in new_domains and item not in seen_domains], 'current')}
     </tbody>
   </table>
+
+  <h2>Riesgo al alza</h2>
+  <ul>{_html_risk_changes(diff.rising_risk if diff else [])}</ul>
+
+  <h2>Riesgo a la baja</h2>
+  <ul>{_html_risk_changes(diff.falling_risk if diff else [])}</ul>
 
   <h2>Desaparecidos</h2>
   <ul>{''.join(f'<li>{html.escape(domain)}</li>' for domain in removed[:20]) or '<li>Ninguno</li>'}</ul>

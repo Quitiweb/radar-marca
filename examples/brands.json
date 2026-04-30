@@ -1,12 +1,16 @@
 [
   {
+    "client": "demo",
     "brand": "Acme",
     "legitimate_domains": ["acme.com"],
-    "whitelist": ["acme.es"]
+    "whitelist": ["acme.es"],
+    "watch_ct_logs": true
   },
   {
+    "client": "demo",
     "brand": "Quitiweb",
     "legitimate_domains": ["quitiweb.com"],
-    "whitelist": ["quitiweb.es"]
+    "whitelist": ["quitiweb.es"],
+    "watch_ct_logs": true
   }
 ]

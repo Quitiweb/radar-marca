@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from radar_marca.models import CandidateDomain
+from radar_marca.models import CandidateDomain, RiskChange
 from radar_marca.storage import load_snapshot, list_snapshots_for_brand
 
 
@@ -14,6 +14,9 @@ class SnapshotDiff:
     new_domains: list[CandidateDomain]
     seen_domains: list[CandidateDomain]
     removed_domains: list[str]
+    rising_risk: list[RiskChange] = field(default_factory=list)
+    falling_risk: list[RiskChange] = field(default_factory=list)
+    unchanged_risk: list[RiskChange] = field(default_factory=list)
 
 
 def compare_result_sets(previous: list[CandidateDomain], current: list[CandidateDomain]) -> SnapshotDiff:
@@ -24,8 +27,26 @@ def compare_result_sets(previous: list[CandidateDomain], current: list[Candidate
     seen_domains = [item for domain, item in current_map.items() if domain in previous_map]
     removed_domains = sorted(domain for domain in previous_map if domain not in current_map)
 
+    rising_risk: list[RiskChange] = []
+    falling_risk: list[RiskChange] = []
+    unchanged_risk: list[RiskChange] = []
+    for domain, current_item in current_map.items():
+        previous_item = previous_map.get(domain)
+        if not previous_item:
+            continue
+        delta = current_item.risk_score - previous_item.risk_score
+        change = RiskChange(domain=domain, previous_risk=previous_item.risk_score, current_risk=current_item.risk_score, delta=delta)
+        if delta > 0:
+            rising_risk.append(change)
+        elif delta < 0:
+            falling_risk.append(change)
+        else:
+            unchanged_risk.append(change)
+
     new_domains.sort(key=lambda item: item.risk_score, reverse=True)
     seen_domains.sort(key=lambda item: item.risk_score, reverse=True)
+    rising_risk.sort(key=lambda item: item.delta, reverse=True)
+    falling_risk.sort(key=lambda item: item.delta)
 
     return SnapshotDiff(
         previous_path=None,
@@ -33,6 +54,9 @@ def compare_result_sets(previous: list[CandidateDomain], current: list[Candidate
         new_domains=new_domains,
         seen_domains=seen_domains,
         removed_domains=removed_domains,
+        rising_risk=rising_risk,
+        falling_risk=falling_risk,
+        unchanged_risk=unchanged_risk,
     )
 
 
