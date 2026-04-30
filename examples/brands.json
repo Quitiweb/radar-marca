@@ -1,0 +1,12 @@
+[
+  {
+    "brand": "Acme",
+    "legitimate_domains": ["acme.com"],
+    "whitelist": ["acme.es"]
+  },
+  {
+    "brand": "Quitiweb",
+    "legitimate_domains": ["quitiweb.com"],
+    "whitelist": ["quitiweb.es"]
+  }
+]
