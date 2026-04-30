@@ -212,6 +212,9 @@ Y como valor secundario:
 - login con Google para pruebas rápidas del master y primeros usuarios
 - prueba gratuita inicial
 - cobro recurrente de **200 €/mes** si el usuario continúa
+- ya existe una **app preview estática** en `site/app.html`
+- ya existe documentación de SaaS MVP en `docs/saas-mvp.md`
+- ya existe un esquema inicial en `supabase/schema.sql`
 
 ### Arquitectura recomendada
 

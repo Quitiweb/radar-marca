@@ -2,6 +2,14 @@
 
 Este archivo sirve para mantener el hilo entre iteraciones de RadarMarca.
 
+## v0.5.0
+
+- arquitectura documentada para SaaS MVP en `docs/saas-mvp.md`
+- esquema inicial de Supabase en `supabase/schema.sql`
+- notas de arranque para Supabase en `supabase/README.md`
+- app preview estática en `site/app.html`
+- la landing enlaza ya a la preview de app
+
 ## v0.4.2
 
 - demo pública estática en `site/demo.html`
