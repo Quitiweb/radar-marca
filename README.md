@@ -18,7 +18,7 @@ RadarMarca es una herramienta para ayudar a marcas, agencias y equipos de seguri
 
 ## Estado actual
 
-Ahora mismo el proyecto va por una **v0.4** funcional para trabajo local.
+Ahora mismo el proyecto va por una **v0.4** funcional para trabajo local y ya tiene una **landing estática inicial** preparada para `radar.quitiweb.com` con despliegue por GitHub Pages.
 
 ## Qué incluye ya
 
@@ -151,6 +151,12 @@ Levantar visor web local:
 radar-marca serve --host 127.0.0.1 --port 5000
 ```
 
+Landing estática local:
+
+```bash
+python3 -m http.server 8080 --directory site
+```
+
 ## Salida esperada
 
 Los resultados incluyen campos como:
@@ -191,10 +197,11 @@ Y como valor secundario:
 
 ### Entrega visible rápida
 
-- publicar una primera versión visible en `https://radar.quitiweb.com`
+- publicar la primera versión visible en `https://radar.quitiweb.com`
 - usar **GitHub Pages** para la landing y demo inicial
-- añadir **GitHub Actions** para despliegue automático, como en `qw-landing`
+- usar **GitHub Actions** para despliegue automático, como en `qw-landing`
 - enseñar una demo clara con datos de ejemplo o semirreales
+- evolucionar la landing hacia una demo más viva según madure el panel
 
 ### Producto SaaS
 

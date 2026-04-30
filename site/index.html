@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RadarMarca · Protege tu marca online</title>
+  <meta name="description" content="Detección de dominios sospechosos, suplantaciones y señales de fraude alrededor de tu marca.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav container">
+      <div class="brand">RadarMarca</div>
+      <div class="nav-links">
+        <a href="#producto">Producto</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#precio">Precio</a>
+        <a href="https://github.com/Quitiweb/radar-marca" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </nav>
+
+    <section class="container hero-grid">
+      <div>
+        <span class="eyebrow">Protección de marca online</span>
+        <h1>Detecta dominios sospechosos, imitaciones y señales de fraude alrededor de tu marca.</h1>
+        <p class="lead">RadarMarca ayuda a marcas, agencias y equipos de seguridad a descubrir presencias dudosas, priorizar riesgos y revisar hallazgos de forma clara.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="mailto:quitiweb.chuwi@gmail.com?subject=Prueba%20RadarMarca">Pedir prueba</a>
+          <a class="btn btn-secondary" href="#demo">Ver demo</a>
+        </div>
+        <p class="microcopy">Objetivo comercial inicial: prueba gratuita y después <strong>200 €/mes</strong> por marca o cliente según alcance.</p>
+      </div>
+      <div class="hero-card panel">
+        <div class="panel-header">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="panel-title">Hallazgos priorizados</span>
+        </div>
+        <div class="finding high">
+          <div>
+            <strong>secure-acme-login.com</strong>
+            <p>Alta similitud · DNS activo · visto en CT logs</p>
+          </div>
+          <span>88</span>
+        </div>
+        <div class="finding medium">
+          <div>
+            <strong>acme-support.net</strong>
+            <p>Dominio activo · MX presente · título sospechoso</p>
+          </div>
+          <span>64</span>
+        </div>
+        <div class="finding low">
+          <div>
+            <strong>acme-digital.es</strong>
+            <p>Parecido razonable · pendiente de revisión</p>
+          </div>
+          <span>41</span>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="producto" class="section container">
+      <div class="section-heading">
+        <span class="eyebrow">Qué hace</span>
+        <h2>Una capa clara de vigilancia de marca sin humo.</h2>
+      </div>
+      <div class="grid three">
+        <article class="card">
+          <h3>Detección de riesgo</h3>
+          <p>Busca dominios parecidos, typosquatting, certificados recientes y señales técnicas básicas que pueden apuntar a fraude o suplantación.</p>
+        </article>
+        <article class="card">
+          <h3>Priorización</h3>
+          <p>No solo lista hallazgos: los ordena por riesgo para que veas primero lo que más merece revisión humana.</p>
+        </article>
+        <article class="card">
+          <h3>Contexto y evolución</h3>
+          <p>Guarda snapshots, compara cambios y separa hallazgos nuevos, ya vistos, desaparecidos y cambios de riesgo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="como-funciona" class="section section-dark">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Cómo funciona</span>
+          <h2>Simple por fuera, útil por dentro.</h2>
+        </div>
+        <div class="steps">
+          <article class="step card">
+            <span class="step-number">01</span>
+            <h3>Alta de marca</h3>
+            <p>Registras tu marca y sus dominios legítimos para construir una base fiable.</p>
+          </article>
+          <article class="step card">
+            <span class="step-number">02</span>
+            <h3>Escaneo</h3>
+            <p>RadarMarca genera candidatos, consulta fuentes públicas y enriquece resultados con señales DNS, HTTP y CT logs.</p>
+          </article>
+          <article class="step card">
+            <span class="step-number">03</span>
+            <h3>Informe claro</h3>
+            <p>Recibes hallazgos priorizados, comparación histórica y una visión simple de qué está cambiando alrededor de tu marca.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo" class="section container">
+      <div class="section-heading">
+        <span class="eyebrow">Demo</span>
+        <h2>Primera versión visible del producto.</h2>
+        <p>Ahora mismo RadarMarca ya tiene base técnica funcional: CLI, snapshots, diff histórico, CSV, HTML y visor local.</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Incluye ya</h3>
+          <ul>
+            <li>Persistencia por cliente y marca</li>
+            <li>Snapshots y diff entre ejecuciones</li>
+            <li>Riesgo al alza / a la baja</li>
+            <li>Exportación JSON, CSV y HTML</li>
+            <li>CT logs, NS, MX, título HTTP y fingerprint simple</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Siguiente fase</h3>
+          <ul>
+            <li>Login con Google</li>
+            <li>Prueba gratuita</li>
+            <li>Pago recurrente de 200 €/mes</li>
+            <li>Panel multiusuario</li>
+            <li>HuellaMarca como capa de contexto</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="precio" class="section section-accent">
+      <div class="container pricing-wrap">
+        <div>
+          <span class="eyebrow">Precio inicial</span>
+          <h2>Una propuesta simple para validar el servicio.</h2>
+          <p>La idea inicial es ofrecer una prueba para validar el valor y, si encaja, pasar a un plan recurrente sencillo.</p>
+        </div>
+        <div class="price-card card">
+          <p class="price">200 €<span>/mes</span></p>
+          <ul>
+            <li>Escaneos por marca</li>
+            <li>Hallazgos priorizados</li>
+            <li>Comparación histórica</li>
+            <li>Informes claros</li>
+          </ul>
+          <a class="btn btn-primary full" href="mailto:quitiweb.chuwi@gmail.com?subject=Quiero%20probar%20RadarMarca">Quiero probarlo</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div class="section-heading">
+        <span class="eyebrow">Ecosistema</span>
+        <h2>RadarMarca + HuellaMarca</h2>
+        <p>RadarMarca se centra en protección y riesgo. HuellaMarca crecerá como capa de contexto, visibilidad y mapa de presencia digital.</p>
+      </div>
+      <div class="grid two">
+        <a class="card link-card" href="https://github.com/Quitiweb/radar-marca" target="_blank" rel="noreferrer">
+          <h3>RadarMarca</h3>
+          <p>Detección de dominios sospechosos, suplantaciones y señales de fraude.</p>
+        </a>
+        <a class="card link-card" href="https://github.com/Quitiweb/huella-marca" target="_blank" rel="noreferrer">
+          <h3>HuellaMarca</h3>
+          <p>Huella digital de marca, menciones, presencia no controlada y contexto.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-wrap">
+      <div>
+        <strong>RadarMarca</strong>
+        <p>Proyecto en construcción, ya orientado a producto real.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/Quitiweb/radar-marca" target="_blank" rel="noreferrer">Repositorio</a>
+        <a href="https://github.com/Quitiweb/huella-marca" target="_blank" rel="noreferrer">HuellaMarca</a>
+        <a href="mailto:quitiweb.chuwi@gmail.com">Contacto</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

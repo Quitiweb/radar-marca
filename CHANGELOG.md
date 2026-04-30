@@ -2,6 +2,13 @@
 
 Este archivo sirve para mantener el hilo entre iteraciones de RadarMarca.
 
+## v0.4.1
+
+- landing estática inicial para `radar.quitiweb.com`
+- estilos y copy de primera versión comercial
+- workflow de GitHub Actions para desplegar GitHub Pages desde `site/`
+- documentación actualizada para Pages y demo pública
+
 ## v0.4.0
 
 - persistencia por cliente y marca
