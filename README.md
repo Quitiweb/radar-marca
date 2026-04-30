@@ -187,13 +187,48 @@ Y como valor secundario:
 
 - visibilidad de presencia digital
 
-## Siguiente iteración sugerida
+## Siguientes pasos
 
-- almacenamiento más rico por cliente
+### Entrega visible rápida
+
+- publicar una primera versión visible en `https://radar.quitiweb.com`
+- usar **GitHub Pages** para la landing y demo inicial
+- añadir **GitHub Actions** para despliegue automático, como en `qw-landing`
+- enseñar una demo clara con datos de ejemplo o semirreales
+
+### Producto SaaS
+
+- permitir registro de usuario
+- permitir alta de marcas por cliente
+- login con Google para pruebas rápidas del master y primeros usuarios
+- prueba gratuita inicial
+- cobro recurrente de **200 €/mes** si el usuario continúa
+
+### Arquitectura recomendada
+
+- **Frontend / landing**: GitHub Pages
+- **Auth**: Supabase Auth o Clerk
+- **Base de datos**: Supabase
+- **Pagos**: Stripe
+- **Backend/API**: Flask/FastAPI o funciones serverless según convenga
+
+### Producto y detección
+
 - snapshots programados
 - correlación de títulos, logos y templates
 - reglas de clasificación más finas
 - conectores de alertas
+- más fuentes además de dominios
+
+### Ecosistema
+
+- mantener **RadarMarca** como capa de riesgo y protección
+- desarrollar **HuellaMarca** como capa de contexto y visibilidad
+- decidir más adelante si HuellaMarca vive como producto independiente o como módulo del panel principal
+
+## Change log
+
+Ver `CHANGELOG.md` para el hilo de iteraciones y decisiones del proyecto.
 
 ## Estado
 
