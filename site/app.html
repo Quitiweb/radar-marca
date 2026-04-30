@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RadarMarca · App preview</title>
-  <meta name="description" content="Preview de la app autenticada de RadarMarca.">
+  <title>RadarMarca · App</title>
+  <meta name="description" content="App inicial de RadarMarca con login y alta de marca.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,71 +17,64 @@
         <a class="backlink" href="./index.html">← Volver a la landing</a>
         <a class="btn btn-secondary" href="./demo.html">Ver demo pública</a>
       </div>
-      <span class="eyebrow">App preview</span>
-      <h1>Así sería el SaaS mínimo: login, alta de marca y trial.</h1>
-      <p class="lead">Esta página no está conectada todavía a Supabase ni Stripe, pero define el flujo inmediato que vamos a construir.</p>
+      <span class="eyebrow">App real · MVP</span>
+      <h1>Entra con Google y da de alta tu primera marca.</h1>
+      <p class="lead">Esta primera versión ya usa Supabase Auth y guarda marcas en la base de datos. Es el comienzo del SaaS real.</p>
     </div>
   </header>
 
   <main class="section container">
-    <div class="grid two app-grid">
-      <section class="card">
-        <span class="eyebrow">Paso 1</span>
-        <h3>Entrar con Google</h3>
-        <p>La app usará Supabase Auth con Google para que puedas entrar con tu cuenta de Gmail y probar RadarMarca con tu marca real.</p>
-        <button class="btn btn-primary full" disabled>Continuar con Google · próximamente</button>
-      </section>
+    <div id="app-alert" class="card notice" hidden></div>
 
-      <section class="card">
-        <span class="eyebrow">Paso 2</span>
-        <h3>Alta de marca</h3>
-        <p>Primer onboarding pensado para que tardes muy poco en arrancar.</p>
-        <form class="mock-form">
-          <label>Marca<input type="text" value="Quitiweb" disabled></label>
-          <label>Dominio principal<input type="text" value="quitiweb.com" disabled></label>
-          <label>Objetivo
-            <select disabled>
-              <option>Fraude / suplantación</option>
-            </select>
-          </label>
-          <label>Sector<input type="text" value="Media / web" disabled></label>
-          <button class="btn btn-secondary full" type="button" disabled>Crear marca · próximamente</button>
-        </form>
-      </section>
-    </div>
-
-    <section class="section-inline">
-      <div class="section-heading slim">
-        <span class="eyebrow">Panel inicial</span>
-        <h2>Qué vería un usuario en trial.</h2>
-      </div>
-      <div class="grid three">
-        <article class="card">
-          <h3>Estado del trial</h3>
-          <p>7 días de prueba o 1 marca con límite de scans para validar si el producto le resuelve el problema.</p>
-        </article>
-        <article class="card">
-          <h3>Último scan</h3>
-          <p>Acceso rápido al último informe, con hallazgos nuevos, riesgo al alza y exportación básica.</p>
-        </article>
-        <article class="card">
-          <h3>Conversión</h3>
-          <p>Si le encaja, pasa a un plan de <strong>200 €/mes</strong> con cobro recurrente y continuidad del histórico.</p>
-        </article>
-      </div>
+    <section id="auth-card" class="card auth-card">
+      <span class="eyebrow">Acceso</span>
+      <h3>Login con Google</h3>
+      <p>Usa tu cuenta de Google para entrar en RadarMarca. Supabase creará tu perfil y tu workspace inicial.</p>
+      <button id="google-login" class="btn btn-primary">Continuar con Google</button>
+      <p class="microcopy">Si Google no vuelve aquí correctamente, revisaremos las redirect URLs en Supabase.</p>
     </section>
 
-    <section class="section-inline cta-panel card">
-      <div>
-        <span class="eyebrow">Base técnica</span>
-        <h2>Ya está definido el stack del SaaS mínimo.</h2>
-        <p>Supabase para auth y datos, Stripe para pagos y una capa de backend ligera para orquestar scans y persistir resultados.</p>
+    <section id="dashboard" hidden>
+      <div class="grid two app-grid">
+        <section class="card">
+          <span class="eyebrow">Tu cuenta</span>
+          <h3 id="user-name">Cargando…</h3>
+          <p id="user-email" class="microcopy"></p>
+          <div class="cta-stack">
+            <button id="logout-btn" class="btn btn-secondary full">Cerrar sesión</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="eyebrow">Alta de marca</span>
+          <h3>Crear marca</h3>
+          <form id="brand-form" class="mock-form">
+            <label>Marca<input type="text" id="brand-name" required placeholder="Ej. Quitiweb"></label>
+            <label>Dominio principal<input type="text" id="brand-domain" required placeholder="quitiweb.com"></label>
+            <label>Sector<input type="text" id="brand-industry" placeholder="Media / web"></label>
+            <label>Objetivo
+              <select id="brand-goal">
+                <option value="fraud">Fraude</option>
+                <option value="impersonation">Suplantación</option>
+                <option value="visibility">Visibilidad</option>
+              </select>
+            </label>
+            <button class="btn btn-primary full" type="submit">Guardar marca</button>
+          </form>
+        </section>
       </div>
-      <div class="cta-stack">
-        <a class="btn btn-primary full" href="https://github.com/Quitiweb/radar-marca" target="_blank" rel="noreferrer">Ver repo</a>
-        <a class="btn btn-secondary full" href="../README.md">Leer README</a>
-      </div>
+
+      <section class="section-inline">
+        <div class="section-heading slim">
+          <span class="eyebrow">Tus marcas</span>
+          <h2>Primer inventario de cliente.</h2>
+        </div>
+        <div id="brands-empty" class="card">Todavía no hay marcas creadas.</div>
+        <div id="brands-list" class="grid two" hidden></div>
+      </section>
     </section>
   </main>
+
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

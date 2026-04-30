@@ -2,6 +2,15 @@
 
 Este archivo sirve para mantener el hilo entre iteraciones de RadarMarca.
 
+## v0.5.1
+
+- esquema aplicado realmente en Supabase
+- RLS y políticas básicas añadidas al esquema
+- trigger para crear perfil y workspace al registrarse un usuario
+- `site/app.html` pasa de preview a app inicial real
+- login con Google vía Supabase preparado
+- alta básica de marca conectada a tablas reales
+
 ## v0.5.0
 
 - arquitectura documentada para SaaS MVP en `docs/saas-mvp.md`

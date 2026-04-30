@@ -18,7 +18,7 @@ RadarMarca es una herramienta para ayudar a marcas, agencias y equipos de seguri
 
 ## Estado actual
 
-Ahora mismo el proyecto va por una **v0.4** funcional para trabajo local y ya tiene una **landing estática inicial** preparada para `radar.quitiweb.com` con despliegue por GitHub Pages.
+Ahora mismo el proyecto ya tiene una **v0.5** inicial del SaaS: landing pública, demo, app estática conectada a Supabase, esquema aplicado y alta básica de marca en base de datos.
 
 ## Qué incluye ya
 
@@ -212,9 +212,11 @@ Y como valor secundario:
 - login con Google para pruebas rápidas del master y primeros usuarios
 - prueba gratuita inicial
 - cobro recurrente de **200 €/mes** si el usuario continúa
-- ya existe una **app preview estática** en `site/app.html`
+- ya existe una **app inicial real** en `site/app.html`
 - ya existe documentación de SaaS MVP en `docs/saas-mvp.md`
 - ya existe un esquema inicial en `supabase/schema.sql`
+- el esquema ya está aplicado en Supabase
+- la app ya usa Supabase Auth + tablas reales para alta básica de marca
 
 ### Arquitectura recomendada
 

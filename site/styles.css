@@ -47,6 +47,10 @@ p { color: var(--muted); line-height: 1.7; }
 .btn-secondary { border:1px solid var(--line); background: rgba(255,255,255,.02); }
 .full { width: 100%; }
 .panel, .card, .proof-chip, .stat-card { background: rgba(15,27,49,.75); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 10px 35px rgba(0,0,0,.18); }
+.notice { margin-bottom: 1rem; }
+.notice-info { border-color: rgba(90,168,255,.35); }
+.notice-success { border-color: rgba(53,211,153,.35); }
+.notice-error { border-color: rgba(251,113,133,.35); }
 .hero-card { padding: 1rem; }
 .panel-header { display:flex; align-items:center; gap:.45rem; margin-bottom:1rem; }
 .panel-title { margin-left: .4rem; color: var(--muted); font-size: .92rem; }
@@ -112,6 +116,7 @@ th { color: #9dc3ff; font-size: .9rem; }
   color: var(--text);
   padding: .85rem .95rem;
 }
+.auth-card { max-width: 680px; }
 .app-grid { align-items: start; }
 
 @media (max-width: 920px) {

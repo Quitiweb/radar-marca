@@ -72,7 +72,145 @@ create table if not exists subscriptions (
   created_at timestamptz not null default now()
 );
 
--- Minimal RLS notes:
--- 1. each authenticated user should only read/write their own profile
--- 2. each workspace owner should only access their workspace, brands, scans and findings
--- 3. service role may insert scan/findings from backend jobs
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, full_name, avatar_url)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name'),
+    new.raw_user_meta_data->>'avatar_url'
+  )
+  on conflict (id) do update set
+    email = excluded.email,
+    full_name = coalesce(excluded.full_name, public.profiles.full_name),
+    avatar_url = coalesce(excluded.avatar_url, public.profiles.avatar_url);
+
+  insert into public.workspaces (name, owner_user_id)
+  select coalesce(new.raw_user_meta_data->>'full_name', split_part(coalesce(new.email, 'workspace'), '@', 1)), new.id
+  where not exists (
+    select 1 from public.workspaces where owner_user_id = new.id
+  );
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+alter table profiles enable row level security;
+alter table workspaces enable row level security;
+alter table brands enable row level security;
+alter table brand_domains enable row level security;
+alter table scans enable row level security;
+alter table findings enable row level security;
+alter table subscriptions enable row level security;
+
+grant usage on schema public to anon, authenticated;
+grant select, insert, update on table profiles to authenticated;
+grant select, insert, update on table workspaces to authenticated;
+grant select, insert, update, delete on table brands to authenticated;
+grant select, insert, update, delete on table brand_domains to authenticated;
+grant select on table scans to authenticated;
+grant select on table findings to authenticated;
+grant select on table subscriptions to authenticated;
+
+create policy "profiles_select_own" on profiles
+  for select to authenticated
+  using (auth.uid() = id);
+
+create policy "profiles_update_own" on profiles
+  for update to authenticated
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
+
+create policy "profiles_insert_own" on profiles
+  for insert to authenticated
+  with check (auth.uid() = id);
+
+create policy "workspaces_select_own" on workspaces
+  for select to authenticated
+  using (owner_user_id = auth.uid());
+
+create policy "workspaces_insert_own" on workspaces
+  for insert to authenticated
+  with check (owner_user_id = auth.uid());
+
+create policy "workspaces_update_own" on workspaces
+  for update to authenticated
+  using (owner_user_id = auth.uid())
+  with check (owner_user_id = auth.uid());
+
+create policy "brands_manage_owned_workspace" on brands
+  for all to authenticated
+  using (
+    exists (
+      select 1 from workspaces w
+      where w.id = brands.workspace_id and w.owner_user_id = auth.uid()
+    )
+  )
+  with check (
+    exists (
+      select 1 from workspaces w
+      where w.id = brands.workspace_id and w.owner_user_id = auth.uid()
+    )
+  );
+
+create policy "brand_domains_manage_owned_brand" on brand_domains
+  for all to authenticated
+  using (
+    exists (
+      select 1
+      from brands b
+      join workspaces w on w.id = b.workspace_id
+      where b.id = brand_domains.brand_id and w.owner_user_id = auth.uid()
+    )
+  )
+  with check (
+    exists (
+      select 1
+      from brands b
+      join workspaces w on w.id = b.workspace_id
+      where b.id = brand_domains.brand_id and w.owner_user_id = auth.uid()
+    )
+  );
+
+create policy "scans_select_owned_brand" on scans
+  for select to authenticated
+  using (
+    exists (
+      select 1
+      from brands b
+      join workspaces w on w.id = b.workspace_id
+      where b.id = scans.brand_id and w.owner_user_id = auth.uid()
+    )
+  );
+
+create policy "findings_select_owned_scan" on findings
+  for select to authenticated
+  using (
+    exists (
+      select 1
+      from scans s
+      join brands b on b.id = s.brand_id
+      join workspaces w on w.id = b.workspace_id
+      where s.id = findings.scan_id and w.owner_user_id = auth.uid()
+    )
+  );
+
+create policy "subscriptions_select_owned_workspace" on subscriptions
+  for select to authenticated
+  using (
+    exists (
+      select 1 from workspaces w
+      where w.id = subscriptions.workspace_id and w.owner_user_id = auth.uid()
+    )
+  );
