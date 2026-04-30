@@ -201,6 +201,8 @@ Y como valor secundario:
 - usar **GitHub Pages** para la landing y demo inicial
 - usar **GitHub Actions** para despliegue automático, como en `qw-landing`
 - enseñar una demo clara con datos de ejemplo o semirreales
+- ya existe una **demo pública estática** en `site/demo.html`
+- ya existe una **página de solicitud de prueba** en `site/interest.html`
 - evolucionar la landing hacia una demo más viva según madure el panel
 
 ### Producto SaaS

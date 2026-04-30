@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RadarMarca · Demo</title>
+  <meta name="description" content="Demo pública de RadarMarca: hallazgos, riesgo, evolución y contexto de marca.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="subhero">
+    <div class="container">
+      <div class="topbar">
+        <a class="backlink" href="./index.html">← Volver a la landing</a>
+        <a class="btn btn-primary" href="mailto:quitiweb.chuwi@gmail.com?subject=Quiero%20una%20demo%20de%20RadarMarca">Pedir acceso</a>
+      </div>
+      <span class="eyebrow">Demo pública</span>
+      <h1>Así se ve una lectura rápida de riesgo alrededor de una marca.</h1>
+      <p class="lead">Esta demo es ilustrativa, pero ya refleja el tipo de salida que RadarMarca puede ofrecer: hallazgos priorizados, evolución y contexto técnico básico.</p>
+    </div>
+  </header>
+
+  <main class="section container">
+    <div class="stat-grid">
+      <div class="stat-card card"><strong>27</strong><span>candidatos analizados</span></div>
+      <div class="stat-card card"><strong>4</strong><span>riesgo alto</span></div>
+      <div class="stat-card card"><strong>2</strong><span>nuevos desde el último snapshot</span></div>
+      <div class="stat-card card"><strong>1</strong><span>riesgo al alza</span></div>
+    </div>
+
+    <section class="section-inline">
+      <div class="section-heading slim">
+        <span class="eyebrow">Hallazgos priorizados</span>
+        <h2>Lo primero que querrías revisar.</h2>
+      </div>
+      <div class="demo-table card">
+        <table>
+          <thead>
+            <tr>
+              <th>Dominio</th>
+              <th>Riesgo</th>
+              <th>Estado</th>
+              <th>Señales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>secure-acme-login.com</strong></td>
+              <td><span class="badge badge-danger">88</span></td>
+              <td><span class="badge badge-new">nuevo</span></td>
+              <td>alta similitud · DNS activo · CT logs · título con marca</td>
+            </tr>
+            <tr>
+              <td><strong>acme-support.net</strong></td>
+              <td><span class="badge badge-warning">64</span></td>
+              <td><span class="badge badge-seen">ya visto</span></td>
+              <td>MX presente · activo · título sospechoso</td>
+            </tr>
+            <tr>
+              <td><strong>verify-acme.co</strong></td>
+              <td><span class="badge badge-warning">59</span></td>
+              <td><span class="badge badge-up">sube</span></td>
+              <td>alta similitud · NS propios · cambió de riesgo</td>
+            </tr>
+            <tr>
+              <td><strong>acme-digital.es</strong></td>
+              <td><span class="badge badge-ok">41</span></td>
+              <td><span class="badge badge-current">actual</span></td>
+              <td>parecido razonable · pendiente de clasificación</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid two section-inline">
+      <article class="card">
+        <span class="eyebrow">Evolución</span>
+        <h3>Cambios entre snapshots</h3>
+        <ul>
+          <li><strong>2 nuevos</strong> dominios detectados</li>
+          <li><strong>1 dominio</strong> sube de riesgo</li>
+          <li><strong>0 dominios</strong> desaparecidos</li>
+          <li><strong>3 hallazgos</strong> siguen presentes</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="eyebrow">Contexto técnico</span>
+        <h3>Señales que ayudan a decidir</h3>
+        <ul>
+          <li>CT logs para dominios recientes</li>
+          <li>NS y MX</li>
+          <li>título HTTP</li>
+          <li>fingerprint simple</li>
+          <li>WHOIS resumido si está disponible</li>
+        </ul>
+      </article>
+    </div>
+
+    <section class="section-inline cta-panel card">
+      <div>
+        <span class="eyebrow">Próximo paso</span>
+        <h2>Si esto te encaja, el siguiente salto es tu marca real.</h2>
+        <p>La siguiente fase del producto será registro, alta de marcas, prueba gratuita y plan recurrente de 200 €/mes.</p>
+      </div>
+      <div class="cta-stack">
+        <a class="btn btn-primary full" href="mailto:quitiweb.chuwi@gmail.com?subject=Quiero%20probar%20RadarMarca%20con%20mi%20marca">Quiero probarlo con mi marca</a>
+        <a class="btn btn-secondary full" href="https://github.com/Quitiweb/radar-marca" target="_blank" rel="noreferrer">Ver repositorio</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -2,6 +2,13 @@
 
 Este archivo sirve para mantener el hilo entre iteraciones de RadarMarca.
 
+## v0.4.2
+
+- demo pública estática en `site/demo.html`
+- página simple de solicitud de prueba en `site/interest.html`
+- CTA más claro y recorrido comercial mejor resuelto en la landing
+- pequeños ajustes visuales para enseñar más sensación de producto
+
 ## v0.4.1
 
 - landing estática inicial para `radar.quitiweb.com`
