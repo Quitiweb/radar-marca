@@ -48,8 +48,11 @@ El MVP inicial se centra en lo más directo y vendible:
 - comprobación HTTP básica
 - whitelist de dominios conocidos
 - snapshots JSON por marca
+- diff entre snapshots
+- ranking de hallazgos nuevos vs ya vistos
 - informe Markdown por marca
-- exportación de resultados en JSON
+- exportación JSON y CSV
+- mini dashboard HTML
 - CLI local para ejecutar búsquedas rápidas
 
 ### No incluye todavía
@@ -102,6 +105,8 @@ radar-marca/
 │     └─ report.py
 ├─ tests/
 │  ├─ test_domain_generator.py
+│  ├─ test_history.py
+│  ├─ test_report.py
 │  ├─ test_scan.py
 │  ├─ test_scorer.py
 │  └─ test_storage.py
@@ -124,16 +129,28 @@ pip install -e . pytest
 radar-marca scan --brand "Acme" --domain acme.com --whitelist acme.es --json
 ```
 
-Ejemplo con límite de candidatos y guardado de snapshot/informe:
+Ejemplo con límite de candidatos y guardado de snapshot/informe/CSV/HTML:
 
 ```bash
-radar-marca scan --brand "Acme" --domain acme.com --limit 25 --save-snapshot --save-report
+radar-marca scan --brand "Acme" --domain acme.com --limit 25 --save-snapshot --save-report --save-csv --save-html
 ```
 
 Ejemplo por fichero:
 
 ```bash
-radar-marca scan-file --input examples/brands.json --limit 15 --skip-http --save-snapshot --save-report
+radar-marca scan-file --input examples/brands.json --limit 15 --skip-http --save-snapshot --save-report --save-csv --save-html
+```
+
+Comparar snapshots:
+
+```bash
+radar-marca diff --brand "Acme"
+```
+
+O indicando dos ficheros:
+
+```bash
+radar-marca diff --previous data/snapshots/acme-20260430T100000Z.json --current data/snapshots/acme-20260430T120000Z.json
 ```
 
 ## Salida esperada
@@ -146,6 +163,7 @@ El comando devuelve candidatos con campos como:
 - `http_reachable`
 - `risk_score`
 - `notes`
+- `status` en CSV (`new`, `seen`, `current`)
 
 ## Roadmap corto
 
@@ -156,10 +174,10 @@ El comando devuelve candidatos con campos como:
 - JSON de resultados
 
 ### v2
-- comparación histórica entre snapshots
 - lista blanca persistente por marca
 - primeras reglas de clasificación
-- salida CSV
+- score más rico por señales de contenido
+- soporte multi-fuente más allá de dominios
 
 ### v3
 - HuellaMarca

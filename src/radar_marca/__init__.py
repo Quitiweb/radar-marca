@@ -1,6 +1,7 @@
 __all__ = [
     "cli",
     "domain_generator",
+    "history",
     "models",
     "report",
     "resolvers",
